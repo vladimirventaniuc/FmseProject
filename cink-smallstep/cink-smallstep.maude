@@ -1,0 +1,45 @@
+in ../pl-builtins.maude
+in ../cink-syntax.maude
+in ../state.maude
+
+in cink-semantics-smallstep
+
+in ../cink-programs.maude
+
+mod TEST is including CINK-SEMANTICS-SMALLSTEP + CINK-PROGRAMS .
+
+ ops sum1 : -> Stmt .
+
+  var N : PLInt .
+
+  eq sum1 =
+   int s ;
+---   scanf("%d",& n) ;
+   s = 0 ;
+   while (!(n <= 0)) {
+     s = s + n ;
+     n = n - 1 ;
+   }
+   .
+endm
+
+rew * < sum1 , n |-> N > .
+
+
+*** eof
+
+rewrite * < sumStmt , .State > .
+
+***EOF
+
+search * < sumStmt , .State > =>! Cfg:ExtendedConfiguration .
+
+*** search graph
+*** show search graph .
+
+
+*** show path 99 .
+
+*** show path 2 .
+
+*** quit

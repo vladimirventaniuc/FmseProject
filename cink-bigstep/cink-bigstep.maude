@@ -1,0 +1,23 @@
+in ../pl-builtins.maude
+in ../cink-syntax.maude
+in ../state.maude
+
+in cink-semantics-bigstep
+
+in ../cink-programs.maude
+
+mod TEST is including CINK-SEMANTICS-BIGSTEP + CINK-PROGRAMS .  endm
+
+rewrite < sumStmt , .State > .
+
+search [5] < sumStmt , .State > =>* Cfg:Configuration .
+
+*** search graph
+show search graph .
+
+*** path to state 2
+
+show path 99 .  *** Warning: bad state number.
+show path 1 .
+
+*** quit

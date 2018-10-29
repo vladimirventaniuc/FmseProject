@@ -1,0 +1,253 @@
+mod CINK-CONFIGURATIONS-BIGSTEP is including CINK-SYNTAX + STATE .
+  sort Configuration .
+  op <_,_> : Exp State -> Configuration [format (nr n++i nir n--i nr d)] .
+  op <_,_> : StmtList State -> Configuration [format (nr n++i nir ni-- nr d)] .
+  op <_> : State -> Configuration . ---[format (nr n++i ni-- nr d)] .
+
+endm
+
+mod CINK-SEMANTICS-BIGSTEP is
+  including CINK-CONFIGURATIONS-BIGSTEP + BOOL .
+
+  subsort Value < Exp .
+
+  var X : Id .  vars Sigma Sigma' Sigma'' : State .
+  vars I I1 I2 : PLInt .  var Xl : List{Id} .
+  vars A A' A1 A1' A2 A2' : Exp .
+  vars B B1 B2 : PLBool .
+  vars V V1 V2 : Value .
+  vars S S' S1 S1' S2 : Stmt . vars Ss Ss' : StmtList .
+
+***(
+  ------------------------------------------------
+   < X, \sigma > \Downarrow < \sigma(X), \sigma >
+***)
+  rl < X, Sigma > => < Sigma(X), Sigma > .
+
+***(
+   < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 + A2, \sigma > \Downarrow < I1 +Int I2, \sigma'' >
+***)
+ crl < A1 + A2, Sigma > => < I1 +Int I2, Sigma'' >
+     if < A1, Sigma > => < I1, Sigma' >
+     /\ < A2, Sigma' > => < I2, Sigma'' > .
+
+***(
+   < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 + A2, \sigma > \Downarrow < I1 +Int I2, \sigma'' >
+***)
+ crl < A1 + A2, Sigma > => < I1 +Int I2, Sigma'' >
+     if < A2, Sigma > => < I2, Sigma' >
+     /\ < A1, Sigma' > => < I1, Sigma'' > .
+
+***(
+   < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 - A2, \sigma > \Downarrow < I1 -Int I2, \sigma'' >
+***)
+ crl < A1 - A2, Sigma > => < I1 -Int I2, Sigma'' >
+     if < A1, Sigma > => < I1, Sigma' >
+     /\ < A2, Sigma' > => < I2, Sigma'' > .
+
+***(
+   < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 + A2, \sigma > \Downarrow < I1 +Int I2, \sigma'' >
+***)
+ crl < A1 - A2, Sigma > => < I1 -Int I2, Sigma'' >
+     if < A2, Sigma > => < I2, Sigma' >
+     /\ < A1, Sigma' > => < I1, Sigma'' > .
+
+***(
+   < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 * A2, \sigma > \Downarrow < I1 *Int I2, \sigma'' >
+***)
+  crl < A1 * A2, Sigma > => < I1 *Int I2, Sigma'' >
+     if < A1, Sigma > => < I1, Sigma' >
+     /\ < A2, Sigma' > => < I2, Sigma'' > .
+
+***(
+   < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 * A2, \sigma > \Downarrow < I1 *Int I2, \sigma'' >
+***)
+  crl < A1 * A2, Sigma > => < I1 *Int I2, Sigma'' >
+     if < A2, Sigma > => < I2, Sigma' >
+     /\ < A1, Sigma' > => < I1, Sigma'' > .
+
+***(
+   < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 / A2, \sigma > \Downarrow < I1 /Int I2, \sigma'' >
+***)
+ crl < A1 / A2, Sigma > => < I1 /Int I2, Sigma'' >
+     if < A1, Sigma > => < I1, Sigma' >
+     /\ < A2, Sigma' > => < I2, Sigma'' > 
+     /\ (I2 =/=Bool 0) = (true).PLBool .
+
+***(
+   < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 / A2, \sigma > \Downarrow < I1 /Int I2, \sigma'' >
+***)
+  crl < A1 / A2, Sigma > => < I1 /Int I2, Sigma'' >
+     if < A2, Sigma > => < I2, Sigma' >
+     /\ < A1, Sigma' > => < I1, Sigma'' > 
+     /\ (I2 =/=Bool 0) = (true).PLBool .
+
+***(
+   < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 <= A2, \sigma > \Downarrow < I1 <=Int I2, \sigma'' >
+***)
+ crl < A1 <= A2, Sigma > => < I1 <=Int I2, Sigma'' >
+     if < A1, Sigma > => < I1, Sigma' > /\ < A2, Sigma' > => < I2, Sigma'' > . 
+
+***(
+   < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 <= A2, \sigma > \Downarrow < I1 <=Int I2, \sigma'' >
+***)
+  crl < A1 <= A2, Sigma > => < I1 <=Int I2, Sigma'' >
+     if < A2, Sigma > => < I2, Sigma' >
+     /\ < A1, Sigma' > => < I1, Sigma'' > .
+
+***(
+   < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 == A2, \sigma > \Downarrow < I1 ==Int I2, \sigma'' >
+***)
+ crl < A1 == A2, Sigma > => < I1 ==Int I2, Sigma'' > 
+     if < A1, Sigma > => < I1, Sigma' >
+     /\ < A2, Sigma' > => < I2, Sigma'' > .
+
+***(
+   < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
+  ----------------------------------------------------------------------------------------
+   < A1 <= A2, \sigma > \Downarrow < I1 <=Int I2, \sigma'' >
+***)
+ crl < A1 == A2, Sigma > => < I1 ==Int I2, Sigma'' > 
+     if < A2, Sigma > => < I2, Sigma' >
+     /\ < A1, Sigma' > => < I1, Sigma'' > .
+
+***(
+  ---------------------------------------------------------
+   < A1 != A2, \sigma > \Downarrow < !(A1 == A2), \sigma >
+***)
+  rl < A1 != A2, Sigma > => < !(A1 == A2), Sigma > .
+
+***(
+               < A, Sigma > \Downarrow < B, Sigma' >
+  ------------------------------------------------------------------
+   < ! A, \sigma > \Downarrow < notBool B, Sigma' >
+***)
+ crl < ! A, Sigma > => < notBool B, Sigma' > 
+     if < A, Sigma > => < B, Sigma' > .
+
+***(
+            < A, Sigma > \Downarrow < V, Sigma' >
+  ---------------------------------------------
+    < X = A, Sigma > \Downarrow  < V, Sigma'[V / X] >
+***)
+ crl < X = A, Sigma > =>  < V, Sigma'[V / X] > 
+     if < A, Sigma > => < V, Sigma' > .
+
+***(
+       < A, Sigma > \Downarrow < V, Sigma' >
+  ----------------------------------------------
+     < A ;, Sigma > \Downarrow < V ;, Sigma' >
+***)
+ crl < A ;, Sigma > => < V ;, Sigma' > 
+     if < A, Sigma > => < V, Sigma' > .
+
+***(
+  ----------------------------------------------
+    < V ; \sigma > \Downarrow < skip, \sigma >
+***)
+  rl < V ;, Sigma > => < Sigma > .
+
+***(
+   < S, Sigma > \Downarrow < skip, \sigma' > < Ss, \sigma' > \Downarrow < skip, \sigma'' >
+  ------------------------------------------------------------------------------------
+                   < S Ss, Sigma > \Downarrow < \sigma'' >
+***)
+ crl < S Ss, Sigma > => < Sigma'' > 
+     if < S, Sigma > => < Sigma' >
+     /\ < Ss, Sigma' > => < Sigma''  > .
+
+***(
+               
+  ---------------------------------------------
+       < skip Ss, Sigma > \Downarrow < Ss, Sigma >
+***)
+***  rl < skip Ss, Sigma > => < Ss, Sigma > .
+  
+***(
+    < A, \sigma > \Downaroow < true, \sigma' >  < S1, \sigma' > \Downarrow < \sigma'' >
+  -------------------------------------------------------------------------------------
+                     < if ( A ) S1 else S2, \sigma > => < \sigma'' >
+***)
+ crl < if ( A ) S1 else S2, Sigma > => < Sigma'' >
+     if < A, Sigma > => < true, Sigma' >
+     /\ < S1, Sigma' > => < Sigma'' > .
+
+***(
+    < A, \sigma > \Downaroow < false, \sigma' >  < S2, \sigma' > \Downarrow < \sigma'' >
+  -------------------------------------------------------------------------------------
+                     < if ( A ) S1 else S2, \sigma > => < \sigma' >
+***)
+ crl < if ( A ) S1 else S2, Sigma > => < Sigma'' >
+     if < A, Sigma > => < false, Sigma' >
+     /\ < S2, Sigma' > => < Sigma'' > .
+
+***(
+               
+  ------------------------------------------------------------
+    < if ( A ) S, Sigma > \Downarrow < if ( A ) S else {}, Sigma >
+***)
+  rl < if ( A ) S, Sigma > => < if ( A ) S else {}, Sigma > .
+
+***(
+      < A, \sigma > \Downarrow < true, \sigma'>  < S while ( A ) S, \sigma' > \Downarrow < \sigma'' >
+  ------------------------------------------------------------------------------------------------
+                           < while ( A ) S, \sigma > \Downarrow < \sigma'' > 
+***)
+ crl < while ( A ) S, Sigma > => < Sigma'' > 
+     if < A, Sigma > => < true, Sigma' >
+     /\ < S while ( A ) S, Sigma' > => < Sigma'' > .
+
+***(
+       < A, Sigma > \Downarrow < false, Sigma' >
+  --------------------------------------------------
+    < while ( A ) S, Sigma > \Downarrow < Sigma' >
+***)
+ crl < while ( A ) S, Sigma > => < Sigma' > 
+     if < A, Sigma > => < false, Sigma' > .
+
+***(
+    < Ss, \sigma & (X |-> 0) > \Downarrow < \sigma' >
+  -----------------------------------------------------
+      < int X ; Ss , Sigma > \Downarrow < \sigma' >
+***)
+ crl < int X ; Ss , Sigma > => < Sigma' >
+  if < Ss, Sigma & (X |-> 0) > => < Sigma' > .
+
+***(
+    < Ss, \sigma & (X |-> false) > \Downarrow < \sigma' >
+  -----------------------------------------------------
+      < bool X ; Ss , Sigma > \Downarrow < \sigma' >
+***)
+ crl < bool X ; Ss , Sigma > => < Sigma' >
+  if < Ss, Sigma & (X |-> 0) > => < Sigma' > .
+
+***(
+        < Ss, \sigma > \Downarrow < \sigma'>
+  ------------------------------------------------
+    < { Ss }, Sigma > \Downarrow < \sigma' >
+***)
+ crl < { Ss }, Sigma > => < Sigma' >
+  if < Ss, Sigma > => < Sigma' > .
+endm

@@ -1,0 +1,63 @@
+mod CINK-SYNTAX is including PL-INT + PL-BOOL + PL-ID .
+
+    sort DeclId .
+    op int_  :  Exp -> DeclId [prec 40] .
+    op bool_ :  Exp -> DeclId [prec 40] .
+    op void_ :  Id  -> DeclId [prec 40] .
+    
+    sort Value .
+    subsort PLBool PLInt < Value .
+
+    sort Exp .
+    subsort Value <  Exp .
+    subsort Id <  Exp .
+    subsort DeclId <  Exp .
+    op _+_ : Exp  Exp -> Exp [gather (E e) prec 33 format (d s s d)] .
+    op _-_ : Exp  Exp -> Exp [gather (E e) prec 33 format (d s s d)] .
+    op _*_ : Exp  Exp -> Exp [gather (E e) prec 33 format (d s s d)] .
+    op _/_ : Exp  Exp -> Exp [gather (E e) prec 33 format (d s s d)] .
+    op _==_ : Exp  Exp -> Exp [prec 37 format (d s s d)] .
+    op _!=_ : Exp  Exp -> Exp [prec 37 format (d s s d)] . 
+    op _<=_ : Exp  Exp -> Exp [prec 37 format (d s s d)] . 
+    op !_ :  Exp -> Exp .
+    op _&&_ : Exp  Exp -> Exp [format (d s s d)] .
+    op _||_ : Exp  Exp -> Exp [format (d s s d)] .
+    op _?_:_ : Exp  Exp  Exp -> Exp [prec 39 format (d s s s s d )] . 
+    op _=_ : Exp  Exp -> Exp [ prec 40 gather (e E) format (d s s d)] .
+    op printf("%d;",_) :  Exp -> Exp . 
+    op scanf("%d",&_) :  Id -> Exp .
+    op _(_) : Id  List{Exp} -> Exp [prec 0 format (d s s s d)] .
+    op _() : Id -> Exp [prec 0 format (d s s d)] . 
+
+    sort Stmt .
+    op _; : Exp -> Stmt [prec 45 format (d b o)] . 
+    op {} :  -> Stmt .
+    op {_} :  StmtList -> Stmt [prec 45 format (b n++i bn--i o)] .
+    op if(_)_ :  Exp  Stmt -> Stmt [prec 47 format (b b o b n++i --o )] .
+    op if(_)_else_ :  Exp  Stmt  Stmt -> Stmt [prec 46 format (b b o b n++i bn--i n++i --o)] .
+    op while(_)_ :  Exp  Stmt -> Stmt [prec 47 format (b b o b n++i --o)] . 
+    op return_; : Exp -> Stmt [format(b o b o)] .
+    op _(_){_} : DeclId  List{DeclId}  StmtList -> Stmt [format (ni sb o sb sb n++io n--i o)] .
+    op _(){_} : DeclId StmtList -> Stmt [format (ni sb sb sb n++io n--i o)] .
+    op main :  -> Id . 
+
+    sort StmtList .
+    subsort Stmt <  StmtList .
+    op __ : StmtList  StmtList -> StmtList [prec 100 assoc format (d ni d)] . 
+
+    sort Pgm .
+    subsort StmtList <  Pgm . 
+
+    --- lists 
+
+   sort List{DeclId} .
+   subsort Bottom < DeclId <  List{DeclId} .
+   subsort List{Bottom} <  List{DeclId} .
+   op _,_ : List{DeclId}  List{DeclId} -> List{DeclId} [ditto] .
+ 
+   sort List{Exp} .
+   subsort Exp <  List{Exp} .
+   subsort List{Id} <  List{Exp} .
+   subsort List{DeclId} <  List{Exp} .
+   op _,_ : List{Exp}  List{Exp} -> List{Exp} [ditto] . 
+endm
