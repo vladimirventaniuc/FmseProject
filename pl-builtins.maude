@@ -1,4 +1,4 @@
---- This module contains several builtins that we will include in the IMP language.
+--- This module contains several builtins that we will include in the CINK language.
 --- It is preferable to run maude with the flag -no-prelude, so that no warnings will be issued for
 ---   redefining the sorts in modules BOOL and INT (which maude's prelude includes by default).
 

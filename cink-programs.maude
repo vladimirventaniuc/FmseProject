@@ -1,9 +1,10 @@
 mod CINK-PROGRAMS is including CINK-SYNTAX .
-ops sumPgm  countPrimesPgm testFunPgm : -> StmtList .
-ops sumStmt primalityStmt : -> Stmt .
-ops sum primality : -> Id .
 
-eq sumStmt = 
+ ops sumPgm  countPrimesPgm testFunPgm : -> StmtList .
+ ops sumStmt primalityStmt : -> Stmt .
+ ops sum primality : -> Id .
+
+ eq sumStmt = 
    int n ;
    int s ;
    n = 5 ;
@@ -15,17 +16,17 @@ eq sumStmt =
    }
    .
 
-eq sumPgm = 
+ eq sumPgm = 
    void main () {
      sumStmt 
      printf("%d;", s) ;
    }
    .
 
-eq countPrimesPgm =
+ eq countPrimesPgm =
 
-int primality ( int n )
-{
+ int primality ( int n )
+ {
    int i ;
    int q ;
    int n ;
@@ -39,10 +40,10 @@ int primality ( int n )
      if (n <= z) t = 0 ; else { i = i + 1 ;  q = n / i ; }
    }
    return t ;
-} 
+ } 
 
-void main () 
-{
+ void main () 
+ {
    int m, n, s, t ;
    m = 10 ; s = 0 ; n = 2 ;
    while (n <= m) {
@@ -51,9 +52,9 @@ void main ()
      n = n + 1 ;
    }
    printf("%d;", n) ;
-} .
+ } .
 
-eq testFunPgm = 
+ eq testFunPgm = 
 
   int f () 
   {

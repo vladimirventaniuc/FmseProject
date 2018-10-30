@@ -86,7 +86,7 @@ mod CINK-SEMANTICS-BIGSTEP is
  crl < A1 / A2, Sigma > => < I1 /Int I2, Sigma'' >
      if < A1, Sigma > => < I1, Sigma' >
      /\ < A2, Sigma' > => < I2, Sigma'' > 
-     /\ (I2 =/=Bool 0) = (true).PLBool .
+     /\ (I2 =/=Int 0) = (true).PLBool .
 
 ***(
    < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
