@@ -9,6 +9,7 @@ mod TABLEAUX is
   op _\implies_ : Assert Assert -> Assert .
   op _\and_ : Assert Assert -> Assert .
   op \not_ : Assert -> Assert .
+  op \forall_._ : Id Assert -> Assert .
 
 ***(
   sort List{Assert} .
@@ -30,6 +31,7 @@ mod TABLEAUX is
   eq (E1 - E2)[ E / X ] = (E1 [ E / X ]) - (E2 [ E / X ]) . 
   eq (E1 * E2)[ E / X ] = (E1 [ E / X ]) * (E2 [ E / X ]) . 
   eq (E1 / E2)[ E / X ] = (E1 [ E / X ]) / (E2 [ E / X ]) . 
+  eq (E1 = E2)[ E / X ] = (E1 [ E / X ]) = (E2 [ E / X ]) .
   eq (E1 == E2)[ E / X ] = (E1 [ E / X ]) == (E2 [ E / X ]) . 
   eq (E1 != E2)[ E / X ] = (E1 [ E / X ]) != (E2 [ E / X ]) . 
   eq (E1 <= E2)[ E / X ] = (E1 [ E / X ]) <= (E2 [ E / X ]) . 
@@ -39,6 +41,8 @@ mod TABLEAUX is
   eq (P \and Q)[ E / X ] = (P [ E / X ]) \and (Q [ E / X ]) .
   eq (P \implies Q)[ E / X ] = (P [ E / X ]) \implies (Q [ E / X ]) .
   eq (\not P)[ E / X ] = \not (P [ E / X ]) .
+ ceq (\forall Y . P)[ E / X ] = \forall Y . (P [ E / X ])  if (X =/= Y) .
+  eq (\forall X . P)[ E / X ] = \forall X . P .
 
   *** extending the language with invariants specification
   op inv : Assert -> Exp [format (n b)] .

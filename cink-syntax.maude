@@ -1,4 +1,4 @@
-mod CINK-SYNTAX is including PL-INT + PL-BOOL + PL-ID .
+mod CINK-SYNTAX is protecting PL-INT + PL-BOOL + PL-ID .
 
     sort DeclId .
     *** DeclId ::= int Exp
