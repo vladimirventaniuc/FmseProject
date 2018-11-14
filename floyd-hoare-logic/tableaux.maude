@@ -75,6 +75,8 @@ mod TABLEAUX is
 
   *** an auxiliary function, returning the precondition of a tableaux
   op pre : ProofTableaux -> Assert .
+  
+  eq pre( (| Q |) ) = Q .
   eq pre(( (| Q |) PT )) = Q .
   eq pre(( (| Q |) [ANN] PT )) = Q .
 
@@ -84,7 +86,9 @@ mod TABLEAUX is
  ceq 2pt((Ss S), Q) = 2pt(Ss, P') PT'
     if (| P' |) PT' := 2pt(S , Q) .
    
-  eq 2pt({ Ss }, Q) = 2pt(Ss, Q) .
+  eq 2pt({ Ss }, Q) = { 2pt(Ss, Q) } .
+  
+  eq 2pt({}, Q) = (| Q |) {} (| Q |) .
 
   eq 2pt(X = E ; ,  Q ) = (| Q [ E / X ] |) X = E ; (| Q |) [ assign ] .
 
@@ -95,18 +99,26 @@ mod TABLEAUX is
   if PT := 2pt(S, Q) /\
      PT' := 2pt(S', Q) .
 
- ceq 2pt(while (E) { inv(INV) ; S }, Q)  =
+ ceq 2pt(while (E) { inv(INV) ; Ss }, Q)  =
      (| INV |)
      while (E) { (| INV \and E |) (| Q' |) [implied] PT }
      (| INV \and \not E |) [while]
      (| Q |) [implied]
-  if (| Q' |) PT := 2pt(S, INV) .
+  if (| Q' |) PT := 2pt(Ss, INV) .
   
 endm
 
+***(
 red 2pt((x = y - 1 ; y = x + 1 ;), (x <= y)) . 
 
 
 red 2pt((x = a ; if (x <= y) x = x + y ; else y = x - y ;), ((x != y) && (0 <= y))) .
 
 red 2pt((x = x + 1 ; while (y <= x) {inv( 0 <= x); x = x - y ;}), (x - y <= 0)) .
+***)
+
+*** red 2pt((s = 0 ; i = 1 ; while (i <= n) { inv((i <= n + 1) && (s == ((i - 1) * i / 2))); s = s + i ; i = i + 1 ; }), s == (n * (n + 1) / 2) ) .
+
+red 2pt({ x = y - 1 ; y = x + 1 ; }, (x <= y)) .
+
+red 2pt((if (x <= 0) s = x ; else {}), (0 <= x)) .
