@@ -1,8 +1,8 @@
 mod CINK-PROGRAMS is including CINK-SYNTAX .
 
- ops sumPgm  countPrimesPgm testFunPgm : -> StmtList .
+ ops sumPgm  countPrimesPgm testFunPgm findM : -> StmtList .
  ops sumStmt primalityStmt : -> Stmt .
- ops sum primality : -> Id .
+ ops sum primality find : -> Id .
 
  eq sumStmt = 
    int n ;
@@ -66,4 +66,28 @@ mod CINK-PROGRAMS is including CINK-SYNTAX .
     int x ;
     x = f() ;
   } .
+
+ eq findM = 
+ 
+ inf find ( int n )
+ {
+   int m = n ;
+   int find = 0 ;
+   while ( find == 0 )
+	{
+         m = m + 1 ;
+	 int div = 2 ;
+	 while ( div <= n )
+	 {
+		if( n % div == 0 && m % div == 0 ) find = 1 ;
+	 }
+	}
+   return m ;
+ }
+ void main ()
+ {
+    int n = 6 ;
+    int m = find ( n ) ;
+    printf("%d;", m) ;
+ }
 endm
