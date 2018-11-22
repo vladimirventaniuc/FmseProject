@@ -37,6 +37,8 @@ mod CINK-SYNTAX is protecting PL-INT + PL-BOOL + PL-ID .
     op !_ :  Exp -> Exp .
     *** Exp ::= Exp && Exp
     op _&&_ : Exp  Exp -> Exp [format (d s s d)] .
+    *** Exp ::= [Exp]
+    op [_] : Exp -> Exp [format (d s s d)] .
     *** Exp ::= Exp || Exp
     op _||_ : Exp  Exp -> Exp [format (d s s d)] .
     *** Exp ::= Exp ? Exp : Exp
@@ -55,6 +57,8 @@ mod CINK-SYNTAX is protecting PL-INT + PL-BOOL + PL-ID .
     sort Stmt .
     *** Stmt ::= Exp ;
     op _; : Exp -> Stmt [prec 45 format (d b o)] .
+    *** for arrays
+    op [_] : Exp -> Stmt [prec 45 format (b n++i bn--i o)] .
     *** Stmt ::= {}
     op {} :  -> Stmt .
     *** Stmt ::= { StmtList }

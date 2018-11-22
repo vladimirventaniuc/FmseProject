@@ -69,25 +69,28 @@ mod CINK-PROGRAMS is including CINK-SYNTAX .
 
  eq findM = 
  
- inf find ( int n )
+ int f ( int n )
  {
    int m = n ;
-   int find = 0 ;
-   while ( find == 0 )
-	{
-         m = m + 1 ;
-	 int div = 2 ;
-	 while ( div <= n )
-	 {
-		if( n % div == 0 && m % div == 0 ) find = 1 ;
-	 }
-	}
+   int z = 0 ;
+   while ( z == 0 )
+   {
+     m = m + 1 ; 
+     int s = 2 ;
+     while ( s <= n )
+     {
+      int v = n / s ;
+      int w = m / s ;
+      if( v * s == n && w * s == m ) z = 1 ;
+      s = s + 1 ;
+      }
+    }
    return m ;
  }
  void main ()
  {
     int n = 6 ;
-    int m = find ( n ) ;
+    int m = f ( n ) ;
     printf("%d;", m) ;
- }
+ } .
 endm

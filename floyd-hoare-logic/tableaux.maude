@@ -1,5 +1,7 @@
 in ../pl-builtins.maude
 in ../cink-syntax.maude
+in ../cink-programs.maude
+
 
 mod TABLEAUX is
   including CINK-SYNTAX + BOOL .
