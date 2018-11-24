@@ -1,6 +1,6 @@
 mod CINK-PROGRAMS is including CINK-SYNTAX .
 
- ops sumPgm  countPrimesPgm testFunPgm findM : -> StmtList .
+ ops sumPgm  countPrimesPgm testFunPgm findM arrayExample : -> StmtList .
  ops sumStmt primalityStmt : -> Stmt .
  ops sum primality find : -> Id .
 
@@ -93,4 +93,13 @@ mod CINK-PROGRAMS is including CINK-SYNTAX .
     int m = f ( n ) ;
     printf("%d;", m) ;
  } .
+
+ eq arrayExample = 
+  int a[50] ;
+  int i ;
+  i = 2 ;
+  a[1] = a[7] ;
+  a[i * 2] = 5 + a[i + 1] ;
+  .
+
 endm
