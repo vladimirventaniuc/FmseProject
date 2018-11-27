@@ -7,7 +7,7 @@ mod CINK-SYNTAX is protecting PL-INT + PL-BOOL + PL-ID .
     op bool_ :  Exp -> DeclId [prec 40] .
     *** DeclId ::= void Exp
     op void_ :  Id  -> DeclId [prec 40] .
-    
+    sort IntArray .
     sort Value .
     *** Value ::= PLBool | PLInt
     subsort PLBool PLInt < Value .
@@ -45,7 +45,7 @@ mod CINK-SYNTAX is protecting PL-INT + PL-BOOL + PL-ID .
     *** Exp ::= Exp ? Exp : Exp
     op _?_:_ : Exp  Exp  Exp -> Exp [prec 39 format (d s s s s d )] . 
     *** Exp ::= Exp = Exp
-    op _[_] : Id Exp -> PLInt [prec 20 format (d s s s d)] .
+    op _[_] : IntArray  Exp -> Exp [prec 20 format (d s s s d)] .
     op _=_ : Exp  Exp -> Exp [ prec 40 gather (e E) format (d s s d)] .
     *** Exp ::=printf("%d;", Exp)
     op printf("%d;",_) :  Exp -> Exp . 

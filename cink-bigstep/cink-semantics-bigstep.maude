@@ -1,9 +1,14 @@
-mod CINK-CONFIGURATIONS-BIGSTEP is including CINK-SYNTAX + STATE + INTARRAY .
+in ../pl-builtins.maude
+in ../cink-syntax.maude
+in ../cink-programs.maude
+in ../array.maude
+
+mod CINK-CONFIGURATIONS-BIGSTEP is including CINK-SYNTAX + STATE + INTARRAY + CINK-PROGRAMS .
   sort Configuration .
   op <_,_> : Exp State -> Configuration [format (nr n++i nir n--i nr d)] .
   op <_,_> : StmtList State -> Configuration [format (nr n++i nir ni-- nr d)] .
   op <_> : State -> Configuration . ---[format (nr n++i ni-- nr d)] .
-
+ 
 endm
 
 mod CINK-SEMANTICS-BIGSTEP is
@@ -17,7 +22,7 @@ mod CINK-SEMANTICS-BIGSTEP is
   vars B B1 B2 : PLBool .
   vars V V1 V2 : Value .
   vars S S' S1 S1' S2 : Stmt . vars Ss Ss' : StmtList .
-
+  ops AR1 AR2 : -> IntArray .
 ***(
   ------------------------------------------------
    < X, \sigma > \Downarrow < \sigma(X), \sigma >
@@ -29,9 +34,9 @@ mod CINK-SEMANTICS-BIGSTEP is
   ----------------------------------------------------------------------------------------
    < A1 + A2, \sigma > \Downarrow < I1 +Int I2, \sigma'' >
 ***)
- crl < A1[A1'] + A2[A2'], Sigma > => < I1 +Int I2, Sigma'' >
-     if < sel(A1, A1'), Sigma > => < I1, Sigma' >
-     /\ < sel(A2, A2'), Sigma' > => < I2, Sigma'' > .
+ crl < AR1[A1'] + AR2[A2'], Sigma > => < I1 +Int I2, Sigma'' >
+     if < sel(AR1, A1'), Sigma > => < I1, Sigma' >
+     /\ < sel(AR2, A2'), Sigma' > => < I2, Sigma'' > .
 
  crl < A1 + A2, Sigma > => < I1 +Int I2, Sigma'' >
      if < A1, Sigma > => < I1, Sigma' >
@@ -45,9 +50,9 @@ mod CINK-SEMANTICS-BIGSTEP is
      if < A2, Sigma > => < I2, Sigma' >
      /\ < A1, Sigma' > => < I1, Sigma'' > .
 
- crl < A1[A1'] + A2[A2'], Sigma > => < I1 +Int I2, Sigma'' >
-     if < sel(A2, A2'), Sigma > => < I2, Sigma' >
-     /\ < sel(A1, A1'), Sigma' > => < I1, Sigma'' > .
+ crl < AR1[A1'] + AR2[A2'], Sigma > => < I1 +Int I2, Sigma'' >
+     if < sel(AR2, A2'), Sigma > => < I2, Sigma' >
+     /\ < sel(AR1, A1'), Sigma' > => < I1, Sigma'' > .
 
 ***(
    < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
@@ -58,9 +63,9 @@ mod CINK-SEMANTICS-BIGSTEP is
      if < A1, Sigma > => < I1, Sigma' >
      /\ < A2, Sigma' > => < I2, Sigma'' > .
 
- crl < A1[A1'] - A2[A2'], Sigma > => < I1 -Int I2, Sigma'' >
-     if < sel(A1, A1'), Sigma > => < I1, Sigma' >
-     /\ < sel(A2, A2'), Sigma' > => < I2, Sigma'' > .
+ crl < AR1[A1'] - AR2[A2'], Sigma > => < I1 -Int I2, Sigma'' >
+     if < sel(AR1, A1'), Sigma > => < I1, Sigma' >
+     /\ < sel(AR2, A2'), Sigma' > => < I2, Sigma'' > .
 
 ***(
    < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
@@ -70,9 +75,9 @@ mod CINK-SEMANTICS-BIGSTEP is
  crl < A1 - A2, Sigma > => < I1 -Int I2, Sigma'' >
      if < A2, Sigma > => < I2, Sigma' >
      /\ < A1, Sigma' > => < I1, Sigma'' > .
- crl < A1[A1'] - A2[A2'], Sigma > => < I1 -Int I2, Sigma'' >
-     if < sel(A2, A2'), Sigma > => < I2, Sigma' >
-     /\ < sel(A1, A1'), Sigma' > => < I1, Sigma'' > .
+ crl < AR1[A1'] - AR2[A2'], Sigma > => < I1 -Int I2, Sigma'' >
+     if < sel(AR2, A2'), Sigma > => < I2, Sigma' >
+     /\ < sel(AR1, A1'), Sigma' > => < I1, Sigma'' > .
 ***(
    < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
   ----------------------------------------------------------------------------------------
@@ -82,9 +87,9 @@ mod CINK-SEMANTICS-BIGSTEP is
      if < A1, Sigma > => < I1, Sigma' >
      /\ < A2, Sigma' > => < I2, Sigma'' > .
 
- crl < A1[A1'] * A2[A2'], Sigma > => < I1 *Int I2, Sigma'' >
-     if < sel(A1, A1'), Sigma > => < I1, Sigma' >
-     /\ < sel(A2, A2'), Sigma' > => < I2, Sigma'' > .
+ crl < AR1[A1'] * AR2[A2'], Sigma > => < I1 *Int I2, Sigma'' >
+     if < sel(AR1, A1'), Sigma > => < I1, Sigma' >
+     /\ < sel(AR2, A2'), Sigma' > => < I2, Sigma'' > .
 ***(
    < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
   ----------------------------------------------------------------------------------------
@@ -94,9 +99,9 @@ mod CINK-SEMANTICS-BIGSTEP is
      if < A2, Sigma > => < I2, Sigma' >
      /\ < A1, Sigma' > => < I1, Sigma'' > .
 
- crl < A1[A1'] * A2[A2'], Sigma > => < I1 *Int I2, Sigma'' >
-     if < sel(A2, A2'), Sigma > => < I2, Sigma' >
-     /\ < sel(A1, A1'), Sigma' > => < I1, Sigma'' > .
+ crl < AR1[A1'] * AR2[A2'], Sigma > => < I1 *Int I2, Sigma'' >
+     if < sel(AR2, A2'), Sigma > => < I2, Sigma' >
+     /\ < sel(AR1, A1'), Sigma' > => < I1, Sigma'' > .
 ***(
    < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
   ----------------------------------------------------------------------------------------
@@ -106,9 +111,9 @@ mod CINK-SEMANTICS-BIGSTEP is
      if < A1, Sigma > => < I1, Sigma' >
      /\ < A2, Sigma' > => < I2, Sigma'' > 
      /\ (I2 =/=Int 0) = (true).PLBool .
- crl < A1[A1'] / A2[A2'], Sigma > => < I1 /Int I2, Sigma'' >
-     if < sel(A1, A1'), Sigma > => < I1, Sigma' >
-     /\ < sel(A2, A2'), Sigma' > => < I2, Sigma'' > .
+ crl < AR1[A1'] / AR2[A2'], Sigma > => < I1 /Int I2, Sigma'' >
+     if < sel(AR1, A1'), Sigma > => < I1, Sigma' >
+     /\ < sel(AR2, A2'), Sigma' > => < I2, Sigma'' > .
 ***(
    < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
   ----------------------------------------------------------------------------------------
@@ -118,9 +123,9 @@ mod CINK-SEMANTICS-BIGSTEP is
      if < A2, Sigma > => < I2, Sigma' >
      /\ < A1, Sigma' > => < I1, Sigma'' > 
      /\ (I2 =/=Bool 0) = (true).PLBool .
- crl < A1[A1'] / A2[A2'], Sigma > => < I1 /Int I2, Sigma'' >
-     if < sel(A2, A2'), Sigma > => < I2, Sigma' >
-     /\ < sel(A1, A1'), Sigma' > => < I1, Sigma'' > .
+ crl < AR1[A1'] / AR2[A2'], Sigma > => < I1 /Int I2, Sigma'' >
+     if < sel(AR2, A2'), Sigma > => < I2, Sigma' >
+     /\ < sel(AR1, A1'), Sigma' > => < I1, Sigma'' > .
 
 ***(
    < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
@@ -129,9 +134,9 @@ mod CINK-SEMANTICS-BIGSTEP is
 ***)
  crl < A1 <= A2, Sigma > => < I1 <=Int I2, Sigma'' >
      if < A1, Sigma > => < I1, Sigma' > /\ < A2, Sigma' > => < I2, Sigma'' > . 
- crl < A1[A1'] <= A2[A2'], Sigma > => < I1 <=Int I2, Sigma'' >
-     if < sel(A1, A1'), Sigma > => < I1, Sigma' >
-     /\ < sel(A2, A2'), Sigma' > => < I2, Sigma'' > .
+ crl < AR1[A1'] <= AR2[A2'], Sigma > => < I1 <=Int I2, Sigma'' >
+     if < sel(AR1, A1'), Sigma > => < I1, Sigma' >
+     /\ < sel(AR2, A2'), Sigma' > => < I2, Sigma'' > .
 ***(
    < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
   ----------------------------------------------------------------------------------------
@@ -140,9 +145,9 @@ mod CINK-SEMANTICS-BIGSTEP is
   crl < A1 <= A2, Sigma > => < I1 <=Int I2, Sigma'' >
      if < A2, Sigma > => < I2, Sigma' >
      /\ < A1, Sigma' > => < I1, Sigma'' > .
- crl < A1[A1'] <= A2[A2'], Sigma > => < I1 <=Int I2, Sigma'' >
-     if < sel(A2, A2'), Sigma > => < I2, Sigma' >
-     /\ < sel(A1, A1'), Sigma' > => < I1, Sigma'' > .
+ crl < AR1[A1'] <= AR2[A2'], Sigma > => < I1 <=Int I2, Sigma'' >
+     if < sel(AR2, A2'), Sigma > => < I2, Sigma' >
+     /\ < sel(AR1, A1'), Sigma' > => < I1, Sigma'' > .
 
 ***(
    < A1, \sigma > \Downarrow < I1, \sigma' > , < A2, \sigma' >\Downarrow < I2, \sigma'' >
@@ -152,9 +157,9 @@ mod CINK-SEMANTICS-BIGSTEP is
  crl < A1 == A2, Sigma > => < I1 ==Int I2, Sigma'' > 
      if < A1, Sigma > => < I1, Sigma' >
      /\ < A2, Sigma' > => < I2, Sigma'' > .
-crl < A1[A1'] == A2[A2'], Sigma > => < I1 ==Int I2, Sigma'' >
-     if < sel(A1, A1'), Sigma > => < I1, Sigma' >
-     /\ < sel(A2, A2'), Sigma' > => < I2, Sigma'' > .
+crl < AR1[A1'] == AR2[A2'], Sigma > => < I1 ==Int I2, Sigma'' >
+     if < sel(AR1, A1'), Sigma > => < I1, Sigma' >
+     /\ < sel(AR2, A2'), Sigma' > => < I2, Sigma'' > .
 
 ***(
    < A2, \sigma >\Downarrow < I2, \sigma' > , < A1, \sigma' > \Downarrow < I1, \sigma'' >
@@ -164,16 +169,16 @@ crl < A1[A1'] == A2[A2'], Sigma > => < I1 ==Int I2, Sigma'' >
  crl < A1 == A2, Sigma > => < I1 ==Int I2, Sigma'' > 
      if < A2, Sigma > => < I2, Sigma' >
      /\ < A1, Sigma' > => < I1, Sigma'' > .
-crl < A1[A1'] == A2[A2'], Sigma > => < I1 ==Int I2, Sigma'' >
-     if < sel(A2, A2'), Sigma > => < I2, Sigma' >
-     /\ < sel(A1, A1'), Sigma' > => < I1, Sigma'' > .
+crl < AR1[A1'] == AR2[A2'], Sigma > => < I1 ==Int I2, Sigma'' >
+     if < sel(AR2, A2'), Sigma > => < I2, Sigma' >
+     /\ < sel(AR1, A1'), Sigma' > => < I1, Sigma'' > .
 
 ***(
   ---------------------------------------------------------
    < A1 != A2, \sigma > \Downarrow < !(A1 == A2), \sigma >
 ***)
   rl < A1 != A2, Sigma > => < !(A1 == A2), Sigma > .
-  crl < A1[A1'] != A2[A2'], Sigma > => < !(A1[A1'] == A2[A2']), Sigma > .
+  rl < AR1[A1'] != AR2[A2'], Sigma > => < !(AR1[A1'] == AR2[A2']), Sigma > .
 
 ***(
                < A, Sigma > \Downarrow < B, Sigma' >
@@ -190,7 +195,7 @@ crl < A1[A1'] == A2[A2'], Sigma > => < I1 ==Int I2, Sigma'' >
 ***)
  crl < X = A, Sigma > =>  < V, Sigma'[V / X] > 
      if < A, Sigma > => < V, Sigma' > .
- crl < A1[A1'] = A, Sigma > =>  < update(A1, A1;, V), Sigma'[V / X] > 
+ crl < AR1[A1'] = A, Sigma > =>  < V, Sigma'[V / sel(AR1, A1')] > 
      if < A, Sigma > => < V, Sigma' > .
 
 ***(
@@ -288,4 +293,5 @@ crl < A1[A1'] == A2[A2'], Sigma > => < I1 ==Int I2, Sigma'' >
 ***)
  crl < { Ss }, Sigma > => < Sigma' >
   if < Ss, Sigma > => < Sigma' > .
+
 endm

@@ -3,7 +3,7 @@ mod CINK-PROGRAMS is including CINK-SYNTAX .
  ops sumPgm  countPrimesPgm testFunPgm findM arrayExample arrayExample2 : -> StmtList .
  ops sumStmt primalityStmt : -> Stmt .
  ops sum primality find : -> Id .
-
+ ops ar1 ar2 : -> IntArray .
  eq sumStmt = 
    int n ;
    int s ;
@@ -95,23 +95,23 @@ mod CINK-PROGRAMS is including CINK-SYNTAX .
  } .
 
  eq arrayExample = 
-  int a[50] ;
+  int ar1[50] ;
   int i ;
   i = 2 ;
-  a[1] = a[7] ;
-  a[i * 2] = 5 + a[i + 1] ;
+  ar1[1] = ar1[7] ;
+  ar1[i * 2] = 5 + ar1[i + 1] ;
   .
 
  eq arrayExample2 = 
-  int a[20] ;
+  int ar1[20] ;
   int i = 0 ;
   while( i <= 20 ){
-	a[i] = i ;
+	ar1[i] = i ;
 	i = i + 1 ;
   }
   i = 0 ;
   while( i <= 20 ){
-	printf("%d;", a[i]) ;
+	printf("%d;", ar1[i]) ;
 	i = i + 1 ;
   }
   .
